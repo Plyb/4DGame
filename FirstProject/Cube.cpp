@@ -11,15 +11,15 @@ public:
 		dimToExclude(dimToExclude) {}
 
 	std::vector<Tetrahedron> getTetrahedra() {
-		Vec4 corners[8] = {
-			makeCorner(std::vector<double> { 0.0f, 0.0f, 0.0f, 0.0f }),
-			makeCorner(std::vector<double> { 1.0f, 0.0f, 0.0f, 0.0f }),
-			makeCorner(std::vector<double> { 0.0f, 1.0f, 0.0f, 0.0f }),
-			makeCorner(std::vector<double> { 1.0f, 1.0f, 0.0f, 0.0f }),
-			makeCorner(std::vector<double> { 0.0f, 0.0f, 1.0f, 0.0f }),
-			makeCorner(std::vector<double> { 1.0f, 0.0f, 1.0f, 0.0f }),
-			makeCorner(std::vector<double> { 0.0f, 1.0f, 1.0f, 0.0f }),
-			makeCorner(std::vector<double> { 1.0f, 1.0f, 1.0f, 0.0f })
+		Vertex corners[8] = {
+			makeCorner(std::vector<double> { 0.0f, 0.0f, 0.0f }),
+			makeCorner(std::vector<double> { 1.0f, 0.0f, 0.0f }),
+			makeCorner(std::vector<double> { 0.0f, 1.0f, 0.0f }),
+			makeCorner(std::vector<double> { 1.0f, 1.0f, 0.0f }),
+			makeCorner(std::vector<double> { 0.0f, 0.0f, 1.0f }),
+			makeCorner(std::vector<double> { 1.0f, 0.0f, 1.0f }),
+			makeCorner(std::vector<double> { 0.0f, 1.0f, 1.0f }),
+			makeCorner(std::vector<double> { 1.0f, 1.0f, 1.0f })
 		};
 
 		return std::vector<Tetrahedron> {
@@ -32,8 +32,9 @@ public:
 	}
 
 private:
-	Vec4 makeCorner(std::vector<double> components) {
+	Vertex makeCorner(std::vector<double> components) {
+		std::vector<double> texCoords = components;
 		components.insert(components.begin() + dimToExclude, 0.0f);
-		return Vec4(components) + lowestCorner;
+		return Vertex(Vec4(components) + lowestCorner, texCoords);
 	}
 };

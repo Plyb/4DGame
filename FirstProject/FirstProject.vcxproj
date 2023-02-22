@@ -155,7 +155,9 @@
     <ClCompile Include="Tesseract.cpp" />
     <ClCompile Include="Tetrahedron.cpp" />
     <ClCompile Include="Triangle.cpp" />
+    <ClCompile Include="Vec3.cpp" />
     <ClCompile Include="Vec4.cpp" />
+    <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h" />

@@ -6,8 +6,8 @@
 
 class Tetrahedron {
 public:
-	Vec4 points[4];
-	Tetrahedron(Vec4 p1, Vec4 p2, Vec4 p3, Vec4 p4) : points{ p1, p2, p3, p4 } {}
+	Vertex points[4];
+	Tetrahedron(Vertex p1, Vertex p2, Vertex p3, Vertex p4) : points{ p1, p2, p3, p4 } {}
 
 	std::vector<Line> getLines() const {
 		return std::vector<Line> { // TODO: turn this into a loop
@@ -27,9 +27,5 @@ public:
 			Triangle(points[1], points[3], points[2]),
 			Triangle(points[0], points[2], points[3]),
 		};
-	}
-
-	Tetrahedron translate(Vec4 v) const {
-		return Tetrahedron(points[0] + v, points[1] + v, points[2] + v, points[3] + v);
 	}
 };

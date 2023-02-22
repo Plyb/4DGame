@@ -8,7 +8,7 @@
 
 int fourD_test_main()
 {
-    Line line(Vec4(0.0f, 1.0f, 0.0f, 0.0f), Vec4(0.0f, -1.0f, 0.0f, 0.0f));
+    /*Line line(Vec4(0.0f, 1.0f, 0.0f, 0.0f), Vec4(0.0f, -1.0f, 0.0f, 0.0f));
     Tetrahedron tetra(
         Vec4(0.0f, 0.0f, 0.0f, 1.0f),
         Vec4(0.0f, -1.0f, 0.0f, -1.0f),
@@ -20,7 +20,7 @@ int fourD_test_main()
     std::optional<Vec4> ip = intersect(line, hp);
     std::vector<Triangle> tris = intersect(tetra, hp);
 
-    std::cout << "Hello World!\n";
+    std::cout << "Hello World!\n";*/
 
     return 0;
 }

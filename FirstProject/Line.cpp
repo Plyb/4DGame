@@ -1,16 +1,19 @@
 #pragma once
 #include "Vec4.cpp"
+#include "Vertex.cpp"
 
 class Line {
 public:
-	Vec4 endpoints[2];
-	Line(Vec4 p1, Vec4 p2) : endpoints{ p1, p2 } {}
+	Vertex endpoints[2];
+	Line(Vertex p1, Vertex p2) : endpoints{ p1, p2 } {}
 
 	Vec4 getDir() const {
-		return endpoints[1] - endpoints[0];
+		return endpoints[1].pos - endpoints[0].pos;
 	}
 
-	Vec4 tToPoint(double t) const {
-		return endpoints[0] + t * getDir();
+	Vertex tToPoint(double t) const {
+		Vec4 pos = endpoints[0].pos + t * getDir();
+		Vec3 texCoord = (endpoints[0].texCoord + endpoints[1].texCoord) / 2;
+		return Vertex(pos, texCoord);
 	}
 };

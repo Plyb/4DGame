@@ -17,6 +17,7 @@
 #include "Tesseract.cpp"
 
 const std::string RES_PATH = "./";
+const int vertexSize = 7;
 float proportion = 0.2;
 glm::vec4 cameraPos = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -46,6 +47,7 @@ glm::mat4 createDropDimensionMat() {
 	return glm::make_mat4(testMat4);
 }
 
+;
 void fillVBO() {
 	/*Tetrahedron tetra(
 		Vec4(0.0f, 0.0f, 0.0f, 1.0f),
@@ -58,7 +60,7 @@ void fillVBO() {
 	Hyperplane hp(Vec4(0.0f, 0.0f, sin(glm::radians(psi)), -cos(glm::radians(psi))), Vec4(cameraPos));
 	std::vector<float> vertexVector = getVertices(tetras, hp);
 	float* vertices = vertexVector.data();
-	numVerts = vertexVector.size() / 4; // The number of components in a vertex
+	numVerts = vertexVector.size() / vertexSize;
 	
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, vertexVector.size() * sizeof(float), vertices, GL_STATIC_DRAW);
@@ -145,22 +147,33 @@ void processInput(GLFWwindow* window, const Shader& shader) {
 }
 
 int createTexture(const char* location, int textureUnit, int sourceType) {
-	int width, height, nrChannels;
+	int width, height, depth, nrChannels;
 	unsigned char* data = stbi_load((RES_PATH + location).c_str(), &width, &height, &nrChannels, 0);
 
 	unsigned int texture;
 	glGenTextures(1, &texture);
 	glActiveTexture(textureUnit);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	glBindTexture(GL_TEXTURE_3D, texture);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	if (data) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, sourceType, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
+		unsigned char pixels[32] = {
+			255, 0, 0, 255,
+			255, 0, 0, 255,
+			255, 0, 0, 255,
+			255, 0, 0, 255,
+			0, 0, 0, 255,
+			0, 0, 0, 255,
+			0, 0, 0, 255,
+			0, 0, 0, 255,
+		};
+		glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB8, 2, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+		glGenerateMipmap(GL_TEXTURE_3D);
 	}
 	else {
 		std::cout << "Failed to load Texture" << std::endl;
@@ -168,7 +181,7 @@ int createTexture(const char* location, int textureUnit, int sourceType) {
 
 	stbi_image_free(data);
 
-	glBindTexture(GL_TEXTURE_2D, texture);
+	glBindTexture(GL_TEXTURE_3D, texture);
 	return texture;
 }
 
@@ -219,9 +232,11 @@ int setUpVAO() {
 	glGenBuffers(1, &VBO);
 	fillVBO();
 
-	const int componentsInVec4 = 4;
-	glVertexAttribPointer(0, componentsInVec4, GL_FLOAT, GL_FALSE, componentsInVec4 * sizeof(float), (void*) 0);
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, vertexSize * sizeof(float), (void*) 0);
 	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertexSize * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	return VAO;
 }
@@ -337,9 +352,9 @@ int main() {
 
 	stbi_set_flip_vertically_on_load(true);
 	int containerTexture = createTexture("container.jpg", GL_TEXTURE0, GL_RGB);
-	int faceTexture = createTexture("awesomeface.png", GL_TEXTURE1, GL_RGBA);
-	shader.setInt("texture1", 0);
-	shader.setInt("texture2", 1);
+	//int faceTexture = createTexture("awesomeface.png", GL_TEXTURE1, GL_RGBA);
+	//shader.setInt("tex", 0);
+	//shader.setInt("texture2", 1);
 
 	unsigned int VAO = setUpVAO();
 
