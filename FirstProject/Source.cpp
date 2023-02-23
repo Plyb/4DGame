@@ -15,6 +15,7 @@
 #include "Slice.cpp"
 #include "Cube.cpp"
 #include "Tesseract.cpp"
+#include "BrickTexture.cpp"
 
 const std::string RES_PATH = "./";
 const int vertexSize = 7;
@@ -158,21 +159,12 @@ int createTexture(const char* location, int textureUnit, int sourceType) {
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_MIRRORED_REPEAT);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	if (data) {
-		unsigned char pixels[32] = {
-			0, 0, 0, 255, // black
-			255, 0, 0, 255, // red
-			0, 255, 0, 255, // green
-			255, 255, 0, 255, // yellow
-			0, 0, 255, 0, // blue
-			255, 0, 255, 255, // magenta
-			0, 255, 255, 255, // cyan
-			255, 255, 255, 255, // white
-		};
-		glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, 2, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+		BrickTexture texture;
+		glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, texture.sideLength, texture.sideLength, texture.sideLength, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture.pixels);
 		glGenerateMipmap(GL_TEXTURE_3D);
 	}
 	else {
