@@ -56,7 +56,7 @@ void fillVBO() {
 		Vec4(0.0f, 1.0f, 0.0f, -1.0f)
 	);*//*
 	std::vector<Tetrahedron> tetras = Cube(Vec4(-0.5f, -0.5f, -0.5f, 0.0f), 3).getTetrahedra();*/
-	std::vector<Tetrahedron> tetras = Tesseract(Vec4(-0.25f, -0.25f, -0.25f, -0.25f)).getTetrahedra();
+	std::vector<Tetrahedron> tetras = Tesseract(Vec4(-0.5f, -0.5f, -0.5f, -0.5f)).getTetrahedra();
 	Hyperplane hp(Vec4(0.0f, 0.0f, sin(glm::radians(psi)), -cos(glm::radians(psi))), Vec4(cameraPos));
 	std::vector<float> vertexVector = getVertices(tetras, hp);
 	float* vertices = vertexVector.data();
@@ -163,16 +163,16 @@ int createTexture(const char* location, int textureUnit, int sourceType) {
 
 	if (data) {
 		unsigned char pixels[32] = {
-			255, 0, 0, 255,
-			255, 0, 0, 255,
-			255, 0, 0, 255,
-			255, 0, 0, 255,
-			0, 0, 0, 255,
-			0, 0, 0, 255,
-			0, 0, 0, 255,
-			0, 0, 0, 255,
+			0, 0, 0, 255, // black
+			255, 0, 0, 255, // red
+			0, 255, 0, 255, // green
+			255, 255, 0, 255, // yellow
+			0, 0, 255, 0, // blue
+			255, 0, 255, 255, // magenta
+			0, 255, 255, 255, // cyan
+			255, 255, 255, 255, // white
 		};
-		glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB8, 2, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+		glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, 2, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 		glGenerateMipmap(GL_TEXTURE_3D);
 	}
 	else {
@@ -235,7 +235,7 @@ int setUpVAO() {
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, vertexSize * sizeof(float), (void*) 0);
 	glEnableVertexAttribArray(0);
 
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertexSize * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertexSize * sizeof(float), (void*)(4 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
 	return VAO;

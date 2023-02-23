@@ -35,6 +35,6 @@ private:
 	Vertex makeCorner(std::vector<double> components) {
 		std::vector<double> texCoords = components;
 		components.insert(components.begin() + dimToExclude, 0.0f);
-		return Vertex(Vec4(components) + lowestCorner, texCoords);
+		return Vertex(Vec4(components) + lowestCorner, Vec3(texCoords));
 	}
 };
