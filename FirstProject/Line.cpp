@@ -13,7 +13,7 @@ public:
 
 	Vertex tToPoint(double t) const {
 		Vec4 pos = endpoints[0].pos + t * getDir();
-		Vec3 texCoord = (endpoints[0].texCoord + endpoints[1].texCoord) / 2;
+		Vec3 texCoord = t * endpoints[1].texCoord + (1.0 - t) * endpoints[0].texCoord;
 		return Vertex(pos, texCoord);
 	}
 };

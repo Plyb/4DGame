@@ -29,7 +29,7 @@ float lastFrame = 0.0f;
 float lastX = 400, lastY = 300;
 float yaw = -90.0f;
 float pitch = 0.0f;
-float psi = 0.0f;
+float psi = 30.0f;
 bool firstMouse = true;
 unsigned int VBO = 0;
 int numVerts = 0;

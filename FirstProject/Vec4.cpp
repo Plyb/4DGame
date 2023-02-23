@@ -28,6 +28,10 @@ public:
 		return Vec4(lhs * rhs.x, lhs * rhs.y, lhs * rhs.z, lhs * rhs.w);
 	}
 
+	Vec4 operator/(double o) const {
+		return Vec4(x / o, y / o, z / o, w / o);
+	}
+
 	operator std::string() {
 		std::stringstream res;
 		res << x << ' ' << y << ' ' << z << ' ' << w;
@@ -40,6 +44,10 @@ public:
 
 	double magnitude() const {
 		return sqrt(x * x + y * y + z * z + w * w);
+	}
+
+	Vec4 normalize() const {
+		return (*this) / magnitude();
 	}
 };
 

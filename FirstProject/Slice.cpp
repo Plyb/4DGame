@@ -25,7 +25,7 @@ inline std::optional<Vertex> intersect(Line line, Hyperplane hyperplane) {
 		return std::nullopt;
 	}
 
-	double t = -(p_n.dot(l_0.pos) + hyperplane.e) / denominator;
+	double t = -(numerator) / denominator;
 	if (t < 0 || t > 1) {
 		// The *line* intersects, but ouside the line segment
 		return std::nullopt;
