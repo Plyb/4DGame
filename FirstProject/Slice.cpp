@@ -13,7 +13,7 @@ inline std::optional<Vertex> intersect(Line line, Hyperplane hyperplane) {
 	Vertex l_0 = line.endpoints[0];
 	Vec4 l_d = line.getDir();
 	
-	double numerator = l_0.pos.dot(p_n) + hyperplane.e;
+	double numerator = (hyperplane.point - l_0.pos).dot(p_n);
 	if (numerator == 0) {
 		// The first endpoint lies in the hyperplane
 		return l_0;
@@ -25,7 +25,7 @@ inline std::optional<Vertex> intersect(Line line, Hyperplane hyperplane) {
 		return std::nullopt;
 	}
 
-	double t = -(numerator) / denominator;
+	double t = (numerator) / denominator;
 	if (t < 0 || t > 1) {
 		// The *line* intersects, but ouside the line segment
 		return std::nullopt;

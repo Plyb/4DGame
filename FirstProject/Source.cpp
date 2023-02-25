@@ -20,7 +20,7 @@
 const std::string RES_PATH = "./";
 const int vertexSize = 7;
 float proportion = 0.2;
-glm::vec4 cameraPos = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+glm::vec4 cameraPos = glm::vec4(0.0f, 0.0f, 3.0f, 0.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 float deltaTime = 0.0f;
@@ -29,7 +29,7 @@ float lastFrame = 0.0f;
 float lastX = 400, lastY = 300;
 float yaw = -90.0f;
 float pitch = 0.0f;
-float psi = 30.0f;
+float psi = 0.0f;
 bool firstMouse = true;
 unsigned int VBO = 0;
 int numVerts = 0;
@@ -142,7 +142,8 @@ void processInput(GLFWwindow* window, const Shader& shader) {
 		fillVBO();
 	}
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-		psi -= 1.0f;
+		psi -= 0.1f;
+		fillVBO();
 	}
 	std::cout << (std::string) Vec4(cameraPos) << "   " << psi << '\n';
 }
