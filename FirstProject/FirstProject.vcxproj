@@ -149,6 +149,7 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="Hyperplane.cpp" />
     <ClCompile Include="Line.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Slice.cpp" />
     <ClCompile Include="Source.cpp" />

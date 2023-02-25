@@ -16,6 +16,7 @@
 #include "Cube.cpp"
 #include "Tesseract.cpp"
 #include "BrickTexture.cpp"
+#include "Scene.cpp"
 
 const std::string RES_PATH = "./";
 const int vertexSize = 7;
@@ -57,7 +58,7 @@ void fillVBO() {
 		Vec4(0.0f, 1.0f, 0.0f, -1.0f)
 	);*//*
 	std::vector<Tetrahedron> tetras = Cube(Vec4(-0.5f, -0.5f, -0.5f, 0.0f), 3).getTetrahedra();*/
-	std::vector<Tetrahedron> tetras = Tesseract(Vec4(-0.5f, -0.5f, -0.5f, -0.5f)).getTetrahedra();
+	std::vector<Tetrahedron> tetras = Scene().getTetrahedra();
 	Hyperplane hp(Vec4(0.0f, 0.0f, sin(glm::radians(psi)), -cos(glm::radians(psi))), Vec4(cameraPos));
 	std::vector<float> vertexVector = getVertices(tetras, hp);
 	float* vertices = vertexVector.data();
@@ -138,7 +139,6 @@ void processInput(GLFWwindow* window, const Shader& shader) {
 	}
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
 		psi += 0.1f;
-		cameraPos = glm::vec4(0.0f, 0.0f, 2* cos(glm::radians(psi)), 2*  sin(glm::radians(psi)));
 		fillVBO();
 	}
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
