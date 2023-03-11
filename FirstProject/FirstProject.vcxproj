@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClCompile Include="4D-test-lib.cpp" />
     <ClCompile Include="BrickTexture.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Hyperplane.cpp" />
