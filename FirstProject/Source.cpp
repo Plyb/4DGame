@@ -1,12 +1,13 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "stb_image.h"
+#include <iomanip>
+
+#include "BrickShader.cpp"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <iomanip>
-
-#include "Shader.h"
 
 #include <iostream>
 #include <vector>
@@ -17,8 +18,6 @@
 #include "Tesseract.cpp"
 #include "BrickTexture.cpp"
 #include "Scene.cpp"
-#include "Camera.cpp"
-#include "BrickShader.cpp"
 
 Camera camera;
 
@@ -37,9 +36,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
 }
 
-void fillVbo() {
-	std::vector<Tetrahedron> tetras = Scene().getTetrahedra();
-	Hyperplane hp(Vec4(0.0f, 0.0f, sin(glm::radians(camera.psi)), -cos(glm::radians(camera.psi))), Vec4(camera.pos));
+void fillVbo(float psi, glm::vec4 pos) {
+	std::vector<Tetrahedron> tetras = Scene().tetrahedra;
+	Hyperplane hp(Vec4(0.0f, 0.0f, sin(glm::radians(psi)), -cos(glm::radians(psi))), Vec4(pos));
 	std::vector<float> vertexVector = getVertices(tetras, hp);
 	float* vertices = vertexVector.data();
 	numVerts = vertexVector.size() / vertexSize;
@@ -76,32 +75,12 @@ void processInput(GLFWwindow* window, const Shader& shader) {
 		glfwSetWindowShouldClose(window, true);
 	}
 
-	camera.update(deltaTime, keyPressed, fillVbo);
+	camera.update(deltaTime, keyPressed);
 
 	if (keyPressed(GLFW_KEY_Q) || keyPressed(GLFW_KEY_E)) {
-		fillVbo();
+		fillVbo(camera.psi, camera.pos);
 	}
 
-}
-
-int loadBrickTexture(int textureUnit) {
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glActiveTexture(textureUnit);
-	glBindTexture(GL_TEXTURE_3D, texture);
-
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	BrickTexture brickTexture;
-	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, brickTexture.sideLength, brickTexture.sideLength, brickTexture.sideLength, 0, GL_RGBA, GL_UNSIGNED_BYTE, brickTexture.pixels);
-	glGenerateMipmap(GL_TEXTURE_3D);
-
-	glBindTexture(GL_TEXTURE_3D, texture);
-	return texture;
 }
 
 int setUpVao() {
@@ -110,7 +89,7 @@ int setUpVao() {
 	glBindVertexArray(vao);
 
 	glGenBuffers(1, &VBO);
-	fillVbo();
+	fillVbo(camera.psi, camera.pos);
 
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, vertexSize * sizeof(float), (void*) 0);
 	glEnableVertexAttribArray(0);
@@ -147,9 +126,6 @@ int main() {
 	}
 	BrickShader shader = BrickShader(camera);
 	shader.use();
-
-	stbi_set_flip_vertically_on_load(true);
-	loadBrickTexture(GL_TEXTURE0);
 
 	unsigned int VAO = setUpVao();
 

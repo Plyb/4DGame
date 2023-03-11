@@ -147,6 +147,7 @@
     <ClCompile Include="BrickShader.cpp" />
     <ClCompile Include="BrickTexture.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Camera.h" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Hyperplane.cpp" />
