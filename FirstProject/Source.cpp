@@ -47,8 +47,7 @@ glm::mat4 createDropDimensionMat() {
 	return glm::make_mat4(testMat4);
 }
 
-;
-void fillVBO() {
+void fillVbo() {
 	std::vector<Tetrahedron> tetras = Scene().getTetrahedra();
 	Hyperplane hp(Vec4(0.0f, 0.0f, sin(glm::radians(camera.psi)), -cos(glm::radians(camera.psi))), Vec4(camera.pos));
 	std::vector<float> vertexVector = getVertices(tetras, hp);
@@ -75,15 +74,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	xoffset *= sensitivity;
 	yoffset *= sensitivity;
 
-	camera.yaw += xoffset;
-	camera.pitch += yoffset;
-
-	if (camera.pitch > 89.0f) {
-		camera.pitch = 89.0f;
-	}
-	else if (camera.pitch < -89.0f) {
-		camera.pitch = -89.0f;
-	}
+	camera.onMousePosChange(xoffset, yoffset);
 }
 
 void processInput(GLFWwindow* window, const Shader& shader) {
@@ -92,51 +83,12 @@ void processInput(GLFWwindow* window, const Shader& shader) {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
 	}
-	else if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
-		glClearColor(1.0f, 0.1f, 0.1f, 1.0f);
-	}
-	else if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-		proportion += 0.005;
-		shader.setFloat("proportion", proportion);
-	}
-	else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-		proportion -= 0.005;
-		shader.setFloat("proportion", proportion);
-	}
 
-	glm::vec4 cameraFront = glm::vec4(
-		cos(glm::radians(camera.yaw)) * cos(glm::radians(camera.pitch)),
-		sin(glm::radians(camera.pitch)),
-		sin(glm::radians(camera.yaw)) * cos(glm::radians(camera.pitch)) * cos(glm::radians(camera.psi)),
-		sin(glm::radians(camera.yaw)) * cos(glm::radians(camera.pitch)) * sin(glm::radians(camera.psi))
-	);
-	glm::vec4 cameraSide = glm::normalize(glm::vec4(
-		-sin(glm::radians(camera.yaw)) * cos(glm::radians(camera.pitch)),
-		0.0f,
-		cos(glm::radians(camera.yaw)) * cos(glm::radians(camera.pitch)) * cos(glm::radians(camera.psi)),
-		cos(glm::radians(camera.yaw)) * cos(glm::radians(camera.pitch)) * sin(glm::radians(camera.psi))
-	));
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		camera.pos += cameraSpeed * cameraFront;
-	}
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		camera.pos -= cameraSpeed * cameraFront;
-	}
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-		camera.pos -= cameraSide * cameraSpeed;
-	}
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-		camera.pos += cameraSide * cameraSpeed;
-	}
-	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-		camera.psi += 0.1f;
-		fillVBO();
-	}
-	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-		camera.psi -= 0.1f;
-		fillVBO();
-	}
-	std::cout << (std::string) Vec4(camera.pos) << "   " << camera.psi << '\n';
+	auto keyPressed = [&window](int key) {
+		return glfwGetKey(window, key) == GLFW_PRESS;
+	};
+
+	camera.update(deltaTime, keyPressed, fillVbo);
 }
 
 int loadBrickTexture(int textureUnit) {
@@ -186,7 +138,7 @@ int setUpVao() {
 	glBindVertexArray(vao);
 
 	glGenBuffers(1, &VBO);
-	fillVBO();
+	fillVbo();
 
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, vertexSize * sizeof(float), (void*) 0);
 	glEnableVertexAttribArray(0);
