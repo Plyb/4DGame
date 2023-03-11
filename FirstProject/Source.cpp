@@ -18,10 +18,10 @@
 #include "BrickTexture.cpp"
 #include "Scene.cpp"
 #include "Camera.cpp"
+#include "BrickShader.cpp"
 
 Camera camera;
 
-const std::string RES_PATH = "./";
 const int vertexSize = 7;
 float proportion = 0.2;
 
@@ -35,16 +35,6 @@ int numVerts = 0;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
-}
-
-glm::mat4 createDropDimensionMat() {
-	float testMat4[16] = {
-		1.0f, 0.0f, 0.0f,					0.0f,
-		0.0f, 1.0f, 0.0f,					0.0f,
-		0.0f, 0.0f, cos(glm::radians(camera.psi)), 0.0f,
-		0.0f, 0.0f, sin(glm::radians(camera.psi)), 0.0f
-	};
-	return glm::make_mat4(testMat4);
 }
 
 void fillVbo() {
@@ -78,17 +68,20 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 }
 
 void processInput(GLFWwindow* window, const Shader& shader) {
-	float cameraSpeed = 2.5f * deltaTime;
-
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-		glfwSetWindowShouldClose(window, true);
-	}
-
 	auto keyPressed = [&window](int key) {
 		return glfwGetKey(window, key) == GLFW_PRESS;
 	};
 
+	if (keyPressed(GLFW_KEY_ESCAPE)) {
+		glfwSetWindowShouldClose(window, true);
+	}
+
 	camera.update(deltaTime, keyPressed, fillVbo);
+
+	if (keyPressed(GLFW_KEY_Q) || keyPressed(GLFW_KEY_E)) {
+		fillVbo();
+	}
+
 }
 
 int loadBrickTexture(int textureUnit) {
@@ -109,27 +102,6 @@ int loadBrickTexture(int textureUnit) {
 
 	glBindTexture(GL_TEXTURE_3D, texture);
 	return texture;
-}
-
-glm::mat4 createModelTransform(glm::vec3 position, float rotationAngle, bool rotateOverTime) {
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, position);
-	return glm::rotate(model, glm::radians(rotationAngle) + (float)glfwGetTime() * glm::radians(50.0f) * rotateOverTime, glm::vec3(1.0f, 0.3f, 0.5f));
-}
-
-glm::mat4 createViewTransform() {
-	glm::vec3 threeCameraPos(camera.pos.x, camera.pos.y, cos(glm::radians(camera.psi)) * camera.pos.z + sin(glm::radians(camera.psi)) * camera.pos.w);
-	glm::vec3 cameraFront(
-		cos(glm::radians(camera.yaw)) * cos(glm::radians(camera.pitch)),
-		sin(glm::radians(camera.pitch)),
-		sin(glm::radians(camera.yaw)) * cos(glm::radians(camera.pitch))
-	);
-	glm::mat4 view = glm::lookAt(threeCameraPos, threeCameraPos + cameraFront, camera.up);
-	return view;
-}
-
-glm::mat4 createProjectionTransform() {
-	return glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 }
 
 int setUpVao() {
@@ -173,7 +145,7 @@ int main() {
 		std::cout << "Failed to initialize GLAD" << std::endl;
 			return -1;
 	}
-	Shader shader = Shader((RES_PATH + "shader.vert").c_str(), (RES_PATH + "shader.frag").c_str());
+	BrickShader shader = BrickShader(camera);
 	shader.use();
 
 	stbi_set_flip_vertically_on_load(true);
@@ -194,12 +166,8 @@ int main() {
 
 		processInput(window, shader);
 
-
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		shader.setMatrix("view", createViewTransform());
-		shader.setMatrix("projection", createProjectionTransform());
-		shader.setMatrix("dropDimension", createDropDimensionMat());
-		shader.setFloat("cameraPos", camera.pos.x, camera.pos.y, camera.pos.z, camera.pos.w);
+		shader.updateUniforms();
 		drawVao(VAO, numVerts);
 
 		glfwSwapBuffers(window);

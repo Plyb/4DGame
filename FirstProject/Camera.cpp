@@ -44,12 +44,10 @@ public:
 			pos += side * cameraSpeed;
 		}
 		if (keyPressed(GLFW_KEY_Q) == GLFW_PRESS) {
-			psi += 0.1f;
-			fillVbo();
+			psi += cameraSpeed;
 		}
 		if (keyPressed(GLFW_KEY_E) == GLFW_PRESS) {
-			psi -= 0.1f;
-			fillVbo();
+			psi -= cameraSpeed;
 		}
 	}
 

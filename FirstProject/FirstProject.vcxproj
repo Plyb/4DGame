@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="4D-test-lib.cpp" />
+    <ClCompile Include="BrickShader.cpp" />
     <ClCompile Include="BrickTexture.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cube.cpp" />
